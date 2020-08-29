@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +13,21 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group([
+    'namespace' => 'Api',
+], function (Router $router) {
+    $router->post('public/register', 'PublicController@register');
+    $router->post('public/login', 'PublicController@login');
+    $router->post('public/getvcode', 'PublicController@getVCode');
+    $router->post('public/reset_password', 'PublicController@resetPassword');
+
+    $router->post('user/logout', 'UserController@logout');
+    $router->post('user/info', 'UserController@getInfo');
+    $router->post('user/update_info', 'UserController@updateInfo');
+    $router->post('user/update_phone', 'UserController@updatePhone');
+    $router->post('user/bind_email', 'UserController@bindEmail');
+    $router->post('user/update_email', 'UserController@updateEmail');
+    $router->post('user/update_password', 'UserController@updatePassword');
+
+
 });

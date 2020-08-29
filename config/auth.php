@@ -14,8 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
-        'passwords' => 'users',
+        'guard' => 'a_user',
     ],
 
     /*
@@ -36,9 +35,9 @@ return [
     */
 
     'guards' => [
-        'web' => [
+        'a_user' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'a_user',
         ],
 
         'api' => [
@@ -66,9 +65,9 @@ return [
     */
 
     'providers' => [
-        'users' => [
+        'a_user' => [
             'driver' => 'eloquent',
-            'model' => App\User::class,
+            'model' => App\Models\AUser::class,
         ],
 
         // 'users' => [
@@ -113,5 +112,8 @@ return [
     */
 
     'password_timeout' => 10800,
+
+    // 加密令牌
+    'token_secret' => env('TOKEN_SECRET', 123456),
 
 ];
