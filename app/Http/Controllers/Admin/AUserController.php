@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Func;
+use App\Utils\CusFun;
 use App\Models\AUser as TM;
 use App\Validators\Admin\AUserValidator;
 use Illuminate\Http\Request;
@@ -31,7 +31,7 @@ class AUserController extends BaseController
         ])->where($where)->orderBy('id', 'desc')->paginate($r_page_size);
         return self::ok([
             'lists' => $lists,
-            'status_lists' => config('params.status.default'),
+            'status_lists' => config('cus_dict.status.default'),
         ]);
     }
 
@@ -87,44 +87,10 @@ class AUserController extends BaseController
         $user = $this->getUInfo;
         $res = TM::find($user->id)->update(['session_key' => '']);
         if ($res) {
-            Func::cacheApiToken('a_user_' . $user->id, null);
+            CusFun::cacheApiToken('a_user_' . $user->id, null);
             return self::ok();
         } else {
             return self::err();
-        }
-    }
-
-    /**
-     * 上传APP
-     * @param $request
-     * @return array
-     */
-    public function uploadApp(Request $request)
-    {
-        // 检查字段
-        $validator = AUserValidator::uploadFile($request);
-        if ($validator !== true) {
-            return self::err($validator);
-        }
-        $info = $request->file('file');
-        $max_size = config('params.file.app.size');
-        $size = $info->getSize();
-        if (empty($info)) {
-            return self::err('请选择要上传的文件');
-        }
-        //大小
-        if ($size > $max_size * 1024 * 1024) {
-            return self::err('文件大小不能超过' . $max_size . 'M');
-        }
-        $save_name = $info->store('app', 'public');
-        if ($save_name) {
-            return self::ok([
-                'full_link' => url('/storage/' . $save_name),
-                'file_link' => '/storage/' . $save_name,
-                'file_size' => Func::fileSizeFormat($size),
-            ]);
-        } else {
-            return self::err('文件上传失败');
         }
     }
 

@@ -73,7 +73,7 @@
                     {{$VCode}}
                 </div>
                 <div class="links">
-                    （有效期{{config('params.cache.vCode.exp')}}分钟）
+                    （有效期{{config('cus_dict.cache.vCode.exp')}}分钟）
                 </div>
             </div>
         </div>

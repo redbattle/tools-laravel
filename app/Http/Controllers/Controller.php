@@ -23,12 +23,6 @@ class Controller extends BaseController
         return ['code' => 0, 'msg' => $msg, 'err_code' => $err_code];
     }
 
-    // 成功返回json状态
-    public static function jsonOk($data = [], $msg = '成功')
-    {
-        return json_encode(['code' => 200, 'msg' => $msg, 'data' => (object)$data]);
-    }
-
     // 失败返回json状态
     public static function jsonErr($msg = '失败', $err_code = '')
     {

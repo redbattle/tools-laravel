@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Func;
+use App\Utils\CusFun;
 use App\Models\AUser;
 use App\Validators\Admin\PublicValidator;
 use Illuminate\Http\Request;
@@ -30,7 +30,7 @@ class PublicController extends Controller
         } else if (!Hash::check($password, $user->password)) {
             return self::err('用户名或密码错误');
         }
-        $session_key = Func::getToken($user->id);
+        $session_key = CusFun::getToken($user->id);
         $encrypt_token = encrypt([
             'uid' => $user->id,
             '_token' => $session_key,
@@ -39,7 +39,7 @@ class PublicController extends Controller
             'session_key' => $session_key,
         ]);
         if ($res) {
-            Func::cacheApiToken('a_user_' . $user->id, $session_key);
+            CusFun::cacheApiToken('a_user_' . $user->id, $session_key);
             return self::ok([
                 '_token' => $encrypt_token,
             ]);

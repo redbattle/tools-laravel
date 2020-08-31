@@ -35,7 +35,7 @@ class CUserController extends BaseController
         })->orderBy('id', 'desc')->paginate($r_page_size);
         return self::ok([
             'lists' => $lists,
-            'status_lists' => config('params.status.default'),
+            'status_lists' => config('cus_dict.status.default'),
         ]);
     }
 

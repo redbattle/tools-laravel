@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Func;
+use App\Utils\CusFun;
 use App\Validators\Api\PublicValidator;
-use App\Models\AppVersion;
 use App\Models\CAccount;
 use App\Models\CUser;
 use Illuminate\Http\Request;
@@ -25,7 +24,7 @@ class PublicController extends Controller
         }
         $r_username = $request->post('username');
         $r_is_exist = $request->post('is_exist');
-        $res = Func::sendVCode($r_username, CAccount::class, $r_is_exist);
+        $res = CusFun::sendVCode($r_username, CAccount::class, $r_is_exist);
         if ($res === true) {
             return self::ok();
         } else {
@@ -46,10 +45,10 @@ class PublicController extends Controller
         $r_password = $request->post('password');
         $r_vcode = $request->post('vcode');
         // 验证有效性
-        if (!Func::checkVCode($r_phone, $r_vcode)) {
+        if (!CusFun::checkVCode($r_phone, $r_vcode)) {
             return self::err('验证码不正确');
         }
-        $session_key = Func::getToken($r_phone);
+        $session_key = CusFun::getToken($r_phone);
         DB::beginTransaction();
         // 保存数据
         $res = CUser::create([
@@ -66,8 +65,8 @@ class PublicController extends Controller
             ]);
             if ($res_account) {
                 DB::commit();
-                Func::cacheApiToken('c_user_' . $res->id, $session_key);
-                Func::cacheVCode($r_phone, null);
+                CusFun::cacheApiToken('c_user_' . $res->id, $session_key);
+                CusFun::cacheVCode($r_phone, null);
                 $encrypt_token = encrypt([
                     'uid' => $res->id,
                     '_token' => $session_key,
@@ -107,7 +106,7 @@ class PublicController extends Controller
         // 验证登录
         if ($r_mode === 'vcode') {
             // 验证码登录
-            if (!Func::checkVCode($r_username, $r_vcode)) {
+            if (!CusFun::checkVCode($r_username, $r_vcode)) {
                 return self::err('验证码不正确');
             }
         } else if ($r_mode === 'password') {
@@ -116,7 +115,7 @@ class PublicController extends Controller
                 return self::err('账号或密码错误');
             }
         }
-        $session_key = Func::getToken($ca->id);
+        $session_key = CusFun::getToken($ca->id);
         $encrypt_token = encrypt([
             'uid' => $ca->cUser->id,
             '_token' => $session_key,
@@ -125,34 +124,15 @@ class PublicController extends Controller
             'session_key' => $session_key,
         ]);
         if ($res) {
-            Func::cacheApiToken('c_user_' . $ca->cUser->id, $session_key);
+            CusFun::cacheApiToken('c_user_' . $ca->cUser->id, $session_key);
             if ($r_mode === 'vcode') {
-                Func::cacheVCode($r_username, null);
+                CusFun::cacheVCode($r_username, null);
             }
             return self::ok([
                 '_token' => $encrypt_token,
             ]);
         } else {
             return self::err('登录失败');
-        }
-    }
-
-    // 获取APP版本
-    public function getVersion(Request $request)
-    {
-        // 检查字段
-        $validator = PublicValidator::getVersion($request);
-        if ($validator !== true) {
-            return self::err($validator);
-        }
-        $r_client = $request->post('client');
-        $data = AppVersion::where(['client' => $r_client])->orderBy('code', 'desc')->orderBy('name', 'desc')->first();
-        if ($data) {
-            return self::ok([
-                'info' => $data,
-            ]);
-        } else {
-            return self::err('暂无版本信息');
         }
     }
 
@@ -173,7 +153,7 @@ class PublicController extends Controller
             return self::err('账号不存在');
         }
         // 验证有效性
-        if (!Func::checkVCode($r_username, $r_vcode)) {
+        if (!CusFun::checkVCode($r_username, $r_vcode)) {
             return self::err('验证码不正确');
         }
         // 重置密码
@@ -182,8 +162,8 @@ class PublicController extends Controller
             'session_key' => '',
         ]);
         if ($res) {
-            Func::cacheVCode($r_username, null);
-            Func::cacheApiToken('c_user_' . $account->uid, null);
+            CusFun::cacheVCode($r_username, null);
+            CusFun::cacheApiToken('c_user_' . $account->uid, null);
             return self::ok();
         } else {
             return self::err();

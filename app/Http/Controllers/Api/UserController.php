@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Func;
+use App\Utils\CusFun;
 use App\Models\CAccount;
 use App\Models\CUser;
 use App\Validators\Api\UserValidator;
@@ -18,7 +18,7 @@ class UserController extends BaseController
         $res = CUser::find($user->id)->update(['session_key' => '']);
         if ($res) {
             // 清除api token缓存
-            Func::cacheApiToken('c_user_' . $user->id, null);
+            CusFun::cacheApiToken('c_user_' . $user->id, null);
             return self::ok();
         } else {
             return self::err();
@@ -97,14 +97,14 @@ class UserController extends BaseController
             return self::err('密码不正确');
         }
         // 校验验证码
-        if (!Func::checkVCode($r_username, $r_vcode)) {
+        if (!CusFun::checkVCode($r_username, $r_vcode)) {
             return self::err('验证码不正确');
         }
         $res = CAccount::where(['uid' => $user->id, 'mode' => 'phone'])->update([
             'username' => $r_username,
         ]);
         if ($res) {
-            Func::cacheVCode($r_username, null);
+            CusFun::cacheVCode($r_username, null);
             return self::ok();
         } else {
             return self::err();
@@ -136,7 +136,7 @@ class UserController extends BaseController
             return self::err('邮箱已被其他账号绑定');
         }
         // 校验验证码
-        if (!Func::checkVCode($r_username, $r_vcode)) {
+        if (!CusFun::checkVCode($r_username, $r_vcode)) {
             return self::err('验证码不正确');
         }
         $res = CAccount::create([
@@ -145,7 +145,7 @@ class UserController extends BaseController
             'mode' => 'email',
         ]);
         if ($res) {
-            Func::cacheVCode($r_username, null);
+            CusFun::cacheVCode($r_username, null);
             return self::ok();
         } else {
             return self::err();
@@ -184,14 +184,14 @@ class UserController extends BaseController
             return self::err('密码不正确');
         }
         // 校验验证码
-        if (!Func::checkVCode($r_username, $r_vcode)) {
+        if (!CusFun::checkVCode($r_username, $r_vcode)) {
             return self::err('验证码不正确');
         }
         $res = CAccount::where(['uid' => $user->id, 'mode' => 'email'])->update([
             'username' => $r_username,
         ]);
         if ($res) {
-            Func::cacheVCode($r_username, null);
+            CusFun::cacheVCode($r_username, null);
             return self::ok();
         } else {
             return self::err();

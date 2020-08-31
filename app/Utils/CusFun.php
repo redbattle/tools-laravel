@@ -96,8 +96,8 @@ class CusFun
      */
     public static function cacheApiToken($key, $value = '')
     {
-        $save_key = md5(config('params.cache.c_token.prefix') . $key);
-        $minutes = config('params.cache.c_token.exp');
+        $save_key = md5(config('cus_dict.cache.c_token.prefix') . $key);
+        $minutes = config('cus_dict.cache.c_token.exp');
         return self::cacheData($save_key, $value, $minutes);
     }
 
@@ -109,8 +109,8 @@ class CusFun
      */
     public static function cacheVCode($key, $value = '')
     {
-        $save_key = md5(config('params.cache.vCode.prefix') . $key);
-        $minutes = config('params.cache.vCode.exp');
+        $save_key = md5(config('cus_dict.cache.vCode.prefix') . $key);
+        $minutes = config('cus_dict.cache.vCode.exp');
         return self::cacheData($save_key, $value, $minutes);
     }
 
@@ -145,7 +145,7 @@ class CusFun
         if ($is_send) {
             $code = self::code(4, 'NUMBER');
         } else {
-            $code = config('params.verify_code.default');
+            $code = config('cus_dict.verify_code.default');
         }
         $cache = self::cacheVCode($phone, $code);
         if ($cache) {
@@ -174,7 +174,7 @@ class CusFun
         if ($is_send) {
             $code = self::code(4, 'NUMBER');
         } else {
-            $code = config('params.verify_code.default');
+            $code = config('cus_dict.verify_code.default');
         }
         $cache = self::cacheVCode($email, $code);
         if ($cache) {
@@ -216,7 +216,7 @@ class CusFun
                 }
             }
         }
-        $is_send = !in_array(config('app.env'), config('params.verify_code.no_send_env'));
+        $is_send = !in_array(config('app.env'), config('cus_dict.verify_code.no_send_env'));
         if (self::checkEmail($username)) {
             // 邮箱
             return self::sendEmailVCode($username, $is_send);

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Func;
+use App\Utils\CusFun;
 use App\Models\CUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -26,13 +26,13 @@ class BaseController extends Controller
         }
         $uid = $token_date['uid'];
         $token = $token_date['_token'];
-        $res_cache = Func::cacheApiToken('c_user_' . $uid);
+        $res_cache = CusFun::cacheApiToken('c_user_' . $uid);
         $user = null;
         if ($res_cache) {
             if ($res_cache != $token) {
                 $user = CUser::select(['id', 'nickname', 'avatar', 'status'])->where(['id' => $uid, 'session_key' => $token])->first();
                 if ($user) {
-                    Func::cacheApiToken('c_user_' . $uid, $token);
+                    CusFun::cacheApiToken('c_user_' . $uid, $token);
                 } else {
                     exit(self::jsonErr('登录已过期，请重新登录1', config('err_code')[4001]));
                 }
@@ -40,7 +40,7 @@ class BaseController extends Controller
         } else {
             $user = CUser::select(['id', 'nickname', 'avatar', 'status'])->where(['id' => $uid, 'session_key' => $token])->first();
             if ($user) {
-                Func::cacheApiToken('c_user_' . $uid, $token);
+                CusFun::cacheApiToken('c_user_' . $uid, $token);
             } else {
                 exit(self::jsonErr('登录已过期，请重新登录2', config('err_code')[4001]));
             }

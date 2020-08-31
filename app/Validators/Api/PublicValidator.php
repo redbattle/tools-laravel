@@ -86,27 +86,6 @@ class PublicValidator
     }
 
     /**
-     * app user getVersion validator
-     * @param $request
-     * @return bool|mixed
-     */
-    public static function getVersion($request)
-    {
-        $rules = [
-            'client' => 'required|in:ios,android',
-        ];
-        $msg = [
-            'client.required' => '客户端不能为空',
-            'client.in' => '客户端值必须为iOS或Android',
-        ];
-        $error = Validator::make($request->all(), $rules, $msg)->errors()->first();
-        if ($error) {
-            return $error;
-        }
-        return true;
-    }
-
-    /**
      * app user resetPassword validator
      * @param $request
      * @return bool|mixed
