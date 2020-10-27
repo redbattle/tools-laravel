@@ -15,4 +15,7 @@ Route::group([
     $router->post('c_user/list', 'CUserController@getList');
     $router->post('c_user/update', 'CUserController@update');
 
+    $router->get('jiaxin/list', 'JiaxinController@getList');
+    $router->get('jiaxin/update', 'JiaxinController@update');
+
 });
